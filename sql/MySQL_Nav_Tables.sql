@@ -1,3 +1,9 @@
+/*
+* SQL File to create tables for CodeIgniter Navigation Library
+* Author: Daniel Waghorn
+* Format: MySQL;
+*/
+
 SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -26,7 +32,7 @@ CREATE TABLE `CI-Nav-Items` (
   `ParentItem` int(255) DEFAULT NULL,
   PRIMARY KEY (`ItemID`),
   KEY `fkParentMenu` (`ParentItem`),
-  CONSTRAINT `ParentRef` FOREIGN KEY (`ParentItem`) REFERENCES `CI-Nav-Items` (`ItemID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `ParentRef` FOREIGN KEY (`ParentItem`) REFERENCES `CI-Nav-Items` (`ItemID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
