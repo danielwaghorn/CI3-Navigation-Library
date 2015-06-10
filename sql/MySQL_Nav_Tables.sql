@@ -25,7 +25,7 @@ CREATE TABLE `CI-Nav-InMenu` (
 -- ----------------------------
 DROP TABLE IF EXISTS `CI-Nav-Items`;
 CREATE TABLE `CI-Nav-Items` (
-  `ItemID` int(11) NOT NULL,
+  `ItemID` int(11) NOT NULL AUTO_INCREMENT,
   `ItemName` varchar(255) NOT NULL,
   `ItemHumanName` varchar(255) DEFAULT NULL,
   `ItemLink` varchar(255) DEFAULT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE `CI-Nav-Items` (
 -- ----------------------------
 DROP TABLE IF EXISTS `CI-Nav-Menus`;
 CREATE TABLE `CI-Nav-Menus` (
-  `MenuID` int(11) NOT NULL,
+  `MenuID` int(11) NOT NULL AUTO_INCREMENT,
   `MenuName` varchar(255) NOT NULL,
   PRIMARY KEY (`MenuID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
