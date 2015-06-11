@@ -9,6 +9,8 @@ The folders in this repo are as follows:
 
 `sql` contains an SQL dump which should be run against a database to create the required schema. *This is in MySQL format.*
 
+`config` contains the config files that can be used for library. **Copy into your `application` directory.**
+
 `libraries` contains the PHP files for the library. **Copy into your `application` directory.**
 
 `models` contains required models for the library. **Copy into your `application` directory.**
