@@ -23,10 +23,13 @@ class Nav_model extends CI_Model {
          * @param $menu_name : string name associated to menu defined in CI-Nav-Menus
          * @returns int menu ID otherwise -1;
          */
+        if (isset($menu_name) && ctype_alnum ($menu_name)) {
+            $query = $this->db->query('SELECT MenuID FROM `CI-Nav-Menus` WHERE MenuName = "' . $menu_name . '"');
+            $row = $query->row();
+            return $row->MenuID;
+        }
 
-        $query = $this->db->query('SELECT `MenuName` FROM `CI-Nav-Menus` WHERE `MenuID` = ' . $menu_name);
-        $row = $query->row();
-        return $row->MenuName;
+        return NULL;
     }
 
     public function getTopLevelNav_byName($menu_name) {
@@ -38,7 +41,7 @@ class Nav_model extends CI_Model {
          */
 
         // Check $nav_name is not null
-        if (isset($menu_name) && (strcmp(preg_replace("/[^a-zA-Z0-9]+/", "", $menu_name),$menu_name))) {
+        if (isset($menu_name) && ctype_alnum($menu_name)) {
             // Get ID
             $menu_ID = $this->getMenuID($menu_name);
             // Return Menu
@@ -55,13 +58,13 @@ class Nav_model extends CI_Model {
          * @returns : Query with result
          */
 
-        if (isset($menu_ID) && $menu_ID != -1 && is_int($menu_ID)) {
+        if (isset($menu_ID) && $menu_ID != -1 && ctype_digit($menu_ID)) {
 
-            $query = $this->db->query('SELECT `ItemName`, `ItemHumanName`, `ItemLink`
-                                    FROM `CI-Nav-Items` AS I
-                                    INNER JOIN `CI-Nav-InMenu` AS C
+            $query = $this->db->query('SELECT `ItemName`, `ItemHumanName`, `ItemLink`, I.`ItemID`
+                                    FROM `CI-Nav-Items` I
+                                    INNER JOIN `CI-Nav-InMenu` C
                                     ON C.`ItemID` = I.`ItemID`
-                                    WHERE C.`MenuID` = ' . $menu_ID);
+                                    WHERE C.`MenuID` = ' . $menu_ID );
 
             return $query;
 
@@ -78,11 +81,11 @@ class Nav_model extends CI_Model {
          * @returns : Query with result of MenuItems
          */
 
-        if (isset($item_ID) && is_int($item_ID)) {
+        if (isset($item_ID) && ctype_digit($item_ID)) {
 
             $query = $this->db->query('SELECT `ItemName`, `ItemHumanName`, `ItemLink`
                                         FROM `CI-Nav-Items`
-                                        WHERE `ParentItem` = ' . $item_ID);
+                                        WHERE `ParentItem` = ' . $item_ID );
             return $query;
 
         }
