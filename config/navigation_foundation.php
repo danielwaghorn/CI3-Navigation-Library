@@ -11,9 +11,12 @@
  *      Contains the closing tag e.g. </ul>
  * @var item_open:
  *      Contains the open tag for a nav item e.g. <li>
- * @var item_open_active:
- *      Contains the open tag for an active item e.g.
- *      <li class="active">
+ * @var item_open_active_class:
+ *      Contains class to be added to an open tag which is active link.
+ *      E.G. 'active'
+ * @var item_open_dropdown_class:
+ *      Contains class to be added to a dropdown parent link open tag.
+ *      E.G. 'dropdown'
  * @var item_close:
  *      Contains the close tag for an item e.g. </li>
  * @var anchor:
@@ -35,9 +38,13 @@ $config['navigation_close'] = '</ul>';
 
 $config['item_open'] = '<li>';
 
-$config['item_open_active'] = '<li class="active">';
+$config['item_open_active_class'] = 'active';
+
+$config['item_open_dropdown_class'] = '';
 
 $config['item_close'] = '</li>';
+
+$config['anchor'] = '<a href="{$url}" {$extra}>{$text}</a>';
 
 $config['anchor'] = '<a href="{$url}" {$extra}>{$text}</a>';
 

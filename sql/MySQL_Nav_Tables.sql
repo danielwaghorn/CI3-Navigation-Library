@@ -1,7 +1,13 @@
 /*
-* SQL File to create tables for CodeIgniter Navigation Library
-* Author: Daniel Waghorn
-* Format: MySQL;
+ MySQL File to create Schema for CI3-Navigation-Library
+ Author: Daniel Waghorn
+ www.daniel-waghorn.com
+
+ Target Server Type    : MySQL
+ Target Server Version : 50625
+ File Encoding         : utf-8
+
+ Date: 06/16/2015 11:48:52 AM
 */
 
 SET NAMES utf8;
@@ -14,6 +20,7 @@ DROP TABLE IF EXISTS `CI-Nav-InMenu`;
 CREATE TABLE `CI-Nav-InMenu` (
   `MenuID` int(11) DEFAULT NULL,
   `ItemID` int(11) DEFAULT NULL,
+  `LinkWeight` int(11) DEFAULT '0',
   KEY `MenuID` (`MenuID`),
   KEY `ItemID` (`ItemID`),
   CONSTRAINT `ItemIDConst` FOREIGN KEY (`ItemID`) REFERENCES `CI-Nav-Items` (`ItemID`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -33,7 +40,7 @@ CREATE TABLE `CI-Nav-Items` (
   PRIMARY KEY (`ItemID`),
   KEY `fkParentMenu` (`ParentItem`),
   CONSTRAINT `ParentRef` FOREIGN KEY (`ParentItem`) REFERENCES `CI-Nav-Items` (`ItemID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `CI-Nav-Menus`
@@ -43,6 +50,6 @@ CREATE TABLE `CI-Nav-Menus` (
   `MenuID` int(11) NOT NULL AUTO_INCREMENT,
   `MenuName` varchar(255) NOT NULL,
   PRIMARY KEY (`MenuID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;

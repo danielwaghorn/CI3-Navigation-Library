@@ -24,7 +24,7 @@ class Nav_model extends CI_Model {
          * @returns int menu ID otherwise -1;
          */
         if (isset($menu_name) && ctype_alnum ($menu_name)) {
-            $query = $this->db->query('SELECT MenuID FROM `CI-Nav-Menus` WHERE MenuName = "' . $menu_name . '"');
+            $query = $this->db->query('SELECT `MenuID` FROM `CI-Nav-Menus` WHERE `MenuName` = ?',array($menu_name));
             $row = $query->row();
             return $row->MenuID;
         }
@@ -60,11 +60,11 @@ class Nav_model extends CI_Model {
 
         if (isset($menu_ID) && $menu_ID != -1 && ctype_digit($menu_ID)) {
 
-            $query = $this->db->query('SELECT `ItemName`, `ItemHumanName`, `ItemLink`, I.`ItemID`
+            $query = $this->db->query('SELECT `ItemName`, `ItemHumanName`, `ItemLink`, C.`ItemID`
                                     FROM `CI-Nav-Items` I
                                     INNER JOIN `CI-Nav-InMenu` C
                                     ON C.`ItemID` = I.`ItemID`
-                                    WHERE C.`MenuID` = ' . $menu_ID );
+                                    WHERE C.`MenuID` = ? ORDER BY `LinkWeight` ASC',array($menu_ID));
 
             return $query;
 
@@ -85,7 +85,7 @@ class Nav_model extends CI_Model {
 
             $query = $this->db->query('SELECT `ItemName`, `ItemHumanName`, `ItemLink`
                                         FROM `CI-Nav-Items`
-                                        WHERE `ParentItem` = ' . $item_ID );
+                                        WHERE `ParentItem` = ? ORDER BY `ItemName` ASC',array($item_ID));
             return $query;
 
         }

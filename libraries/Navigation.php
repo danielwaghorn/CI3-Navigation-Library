@@ -16,9 +16,10 @@ class Navigation {
      *      Contains the closing tag e.g. </ul>
      * @var $_item_open:
      *      Contains the open tag for a nav item e.g. <li>
-     * @var $_item_open_active:
-     *      Contains the open tag for an active item e.g.
-     *      <li class="active">
+     * @var $_item_open_active_class:
+     *      Contains the class for an active item e.g. "active"
+     * @var $_item_open_dropdown_class:
+     *      Contains the class for an item which has subitems e.g. "dropdown"
      * @var $_item_close:
      *      Contains the close tag for an item e.g. </li>
      * @var $_anchor:
@@ -27,6 +28,8 @@ class Navigation {
      *      where $url is the link to the item,
      *      $extra is any additional attributes e.g. class="main"
      *      and $text is the text to be held in the anchor.
+     * @var $_anchor_dropdown:
+     *      Different template for dropdown parent links.
      * @var $_dropdown_open:
      *      Contains the open tag for a dropdown e.g. <ul class="dropdown">
      * @var $_dropdown_close:
@@ -37,9 +40,11 @@ class Navigation {
     private $_navigation_open;
     private $_navigation_close;
     private $_item_open;
-    private $_item_open_active;
+    private $_item_open_active_class;
+    private $_item_open_dropdown_class;
     private $_item_close;
     private $_anchor;
+    private $_anchor_dropdown;
     private $_dropdown_open;
     private $_dropdown_close;
 
@@ -73,9 +78,11 @@ class Navigation {
         $this->_navigation_open = $this->CI->config->item('navigation_open',$params['config']);
         $this->_navigation_close = $this->CI->config->item('navigation_close',$params['config']);
         $this->_item_open = $this->CI->config->item('item_open',$params['config']);
-        $this->_item_open_active = $this->CI->config->item('item_open_active',$params['config']);
+        $this->_item_open_active_class = $this->CI->config->item('item_open_active_class',$params['config']);
+        $this->_item_open_dropdown_class = $this->CI->config->item('item_open_dropdown_class',$params['config']);
         $this->_item_close = $this->CI->config->item('item_close',$params['config']);
         $this->_anchor = $this->CI->config->item('anchor',$params['config']);
+        $this->_anchor_dropdown = $this->CI->config->item('anchor_dropdown',$params['config']);
         $this->_dropdown_open = $this->CI->config->item('dropdown_open',$params['config']);
         $this->_dropdown_close = $this->CI->config->item('dropdown_close',$params['config']);
 
@@ -97,25 +104,34 @@ class Navigation {
          */
 
         // Remove site url
-        $page_url = str_replace($this->_current_url,$this->_base_url,'');
-        return strcmp($url,$page_url);
+        $page_url = str_replace(rtrim($this->_base_url,"/"),"",$this->_current_url);
+        if(empty($page_url)){
+            $page_url = "/";
+        }
+        return strcmp("/" . $url,$page_url) == 0;
     }
 
-    function bindAnchor($url, $text, $extra = '') {
+    function bindAnchor($url, $text, $extra = '',$isDropdown = false) {
         /**
          * Takes parameters for an anchor and binds them to template.
          * @param url : url to put in href
          * @param text : text to put between anchor
          * @param OPTIONAL extra : extra attributes and data
+         * @param OPTIONAL isDropdown : boolean indicating if dropdown or not,
+         * changes url template.
          */
 
         $vars = array(
-            '{$url}'       => $url,
+            '{$url}'       => $this->_base_url . $url,
             '{$text}'        => $text,
             '{$extra}' => $extra
         );
 
-        return strtr($this->_anchor, $vars);
+        if ($isDropdown) {
+            return strtr($this->_anchor_dropdown,$vars);
+        } else {
+            return strtr($this->_anchor, $vars);
+        }
     }
 
     function outputItem($item) {
@@ -127,20 +143,38 @@ class Navigation {
 
         $output = '';
 
-        if ($this->isCurrentPage($item->ItemLink)) {
-            $output .= $this->_item_open_active;
-        } else {
-            $output .= $this->_item_open;
-        }
+        $classes = '';
 
-        // Output link
-        $output .= $this->bindAnchor($item->ItemLink, $item->ItemHumanName);
+        $output .= $this->_item_open;
 
         // Check for sub items.
         $subItems = $this->CI->nav->getSubItems($item->ItemID);
 
-        if (count($subItems->result_array()) > 0) {
-            $this->renderDropdown($subItems);
+        if ($this->isCurrentPage($item->ItemLink)) {
+            $classes .= $this->_item_open_active_class . ' ';
+        }
+
+        if (!is_null($subItems) && count($subItems->result()) > 0){
+            // See if we have dropdown
+            $classes .= $this->_item_open_dropdown_class . ' ';
+        }
+
+        if(!strcmp($classes,'') == 0) {
+            // If classes to add them append to open tag
+            $output = str_replace('>',' class="' . $classes . '">',$output);
+        }
+
+        // Output link
+        if (!is_null($subItems) && count($subItems->result()) > 0) {
+            $output .= $this->bindAnchor($item->ItemLink, $item->ItemHumanName, '', $this->_anchor_dropdown);
+        } else {
+            $output .= $this->bindAnchor($item->ItemLink, $item->ItemHumanName);
+        }
+
+        if (!is_null($subItems)){
+            if (count($subItems->result()) > 0) {
+                $output .= $this->renderDropdown($subItems);
+            }
         }
 
         $output .= $this->_item_close;
@@ -157,7 +191,7 @@ class Navigation {
 
         $output = $this->_dropdown_open;
 
-        foreach ($subItems->result_array() as $item) {
+        foreach ($subItems->result() as $item) {
 
             // Check if current page and open item
             if ($this->isCurrentPage($item->ItemLink)) {
@@ -202,21 +236,50 @@ class Navigation {
 
         $top_level = $this->CI->nav->getTopLevelNav_byID($menu_id);
 
-        // if ($top_level->num_rows() > 0)
-       //  {
+        if (count($top_level->result()) > 0)
+        {
             foreach ($top_level->result() as $item)
             {
                 // Output each nav item
                 $this->_output .= $this->outputItem($item);
             }
-        // }
+        }
 
         $this->_output .= $this->_navigation_close;
 
         return $this->_output;
     }
 
+    public function generateRoleBasedNav() {
+        /**
+         * Outputs navigation selectively based on user authentication
+         * @returns HTML markup for navigation
+         */
 
+        if (!$this->CI->ion_auth->logged_in()){
+            return $this->generateNav_fromName('public');
+        } else {
+            // Customer Group
+            if ($this->CI->ion_auth->in_group('customer')){
+                return $this->generateNav_fromName('customer');
+            }
+
+            // Business Group
+            if ($this->CI->ion_auth->in_group('business')){
+                return $this->generateNav_fromName('business');
+            }
+
+            // Introducer Group
+            if ($this->CI->ion_auth->in_group('introducer')){
+                return $this->generateNav_fromName('introducer');
+            }
+
+            // Admins
+            if ($this->CI->ion_auth->is_admin()){
+                return $this->generateNav_fromName('admin');
+            }
+        }
+    }
 
 
 }
