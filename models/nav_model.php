@@ -21,7 +21,7 @@ class Nav_model extends CI_Model {
         /**
          * Returns the id from associated menu handle
          * @param $menu_name : string name associated to menu defined in CI-Nav-Menus
-         * @returns int menu ID otherwise -1;
+         * @return int menu ID otherwise -1;
          */
         if (isset($menu_name) && ctype_alnum ($menu_name)) {
             $query = $this->db->query('SELECT `MenuID` FROM `CI-Nav-Menus` WHERE `MenuName` = ?',array($menu_name));
@@ -37,7 +37,7 @@ class Nav_model extends CI_Model {
          * Returns the top level of a menu
          * @param $menu_name : String handle of menu e.g. 'public'
          *  as defined in CI-Nav-Menus
-         * @returns : Query with result, if invalid NULL
+         * @return : Query with result, if invalid NULL
          */
 
         // Check $nav_name is not null
@@ -55,7 +55,7 @@ class Nav_model extends CI_Model {
         /**
          * Returns the top level of a menu
          * @param $menu_ID : int ID of menu as defined in CI-Nav-Menus
-         * @returns : Query with result
+         * @return : Query with result
          */
 
         if (isset($menu_ID) && $menu_ID != -1 && ctype_digit($menu_ID)) {
@@ -78,7 +78,7 @@ class Nav_model extends CI_Model {
          * refs ItemID in CI-Nav-Items
          * @param $item_ID : int ID of menu item as defined in
          * CI-Nav-Items
-         * @returns : Query with result of MenuItems
+         * @return : Query with result of MenuItems
          */
 
         if (isset($item_ID) && ctype_digit($item_ID)) {

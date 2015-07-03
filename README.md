@@ -21,6 +21,6 @@ The folders in this repo are as follows:
 2. Copy the contents of `libraries` and `models` into their respective folders in your `application` directory.
 3. Import the library whenever you need to output navigation; typically your header partial view using:
 ```php
-$this->load->library('ci-navigation');
+$this->load->library('navigation');
 ```
 You can also autoload it if you need navigation on every page.

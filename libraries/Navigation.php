@@ -138,7 +138,7 @@ class Navigation {
         /**
          * Outputs the markup for a single item.
          * @param item : query row for a single nav item.
-         * @returns output : string composed of HTML to be rendered
+         * @return output : string composed of HTML to be rendered
          */
 
         $output = '';
@@ -186,19 +186,31 @@ class Navigation {
         /**
          * Takes subitems and returns markup.
          * @param subItems : Query result containing nav items
-         * @returns output : string composed of HTML to be rendered
+         * @return output : string composed of HTML to be rendered
          */
 
         $output = $this->_dropdown_open;
 
         foreach ($subItems->result() as $item) {
+            $subOutput = $this->_item_open;
+            $classes = '';
 
             // Check if current page and open item
             if ($this->isCurrentPage($item->ItemLink)) {
-                $output .= $this->_item_open_active;
-            } else {
-                $output .= $this->_item_open;
+                $classes .= $this->_item_open_active_class . ' ';
             }
+
+            if (!is_null($subItems) && count($subItems->result()) > 0){
+                // See if we have dropdown
+                $classes .= $this->_item_open_dropdown_class . ' ';
+            }
+
+            if(!strcmp($classes,'') == 0) {
+                // If classes to add them append to open tag
+                $subOutput = str_replace('>',' class="' . $classes . '">',$subOutput);
+            }
+
+            $output .= $subOutput;
 
             // Output link
             $output .= $this->bindAnchor($item->ItemLink, $item->ItemHumanName);
@@ -217,7 +229,7 @@ class Navigation {
         /**
          * Resolves a menu name to ID then returns the menu output.
          * @param menu_name : string identifier of the menu as in CI-Nav-Menus
-         * @returns output : string composed of HTML to be rendered.
+         * @return output : string composed of HTML to be rendered.
          */
         $menu_id = $this->CI->nav->getMenuID($menu_name);
         return $this->generateNav_fromID($menu_id);
@@ -228,7 +240,7 @@ class Navigation {
          * Generates output for menu from a menu ID as specified in
          * CI-Nav-Menus.
          * @param menu_id : int ID of the menu to be generate
-         * @returns output : string composed of HTML to be rendered.
+         * @return output : string composed of HTML to be rendered.
          */
 
         // Open Container
@@ -253,7 +265,7 @@ class Navigation {
     public function generateRoleBasedNav() {
         /**
          * Outputs navigation selectively based on user authentication
-         * @returns HTML markup for navigation
+         * @return HTML markup for navigation
          */
 
         if (!$this->CI->ion_auth->logged_in()){
