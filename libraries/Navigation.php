@@ -265,25 +265,19 @@ class Navigation {
     public function generateRoleBasedNav() {
         /**
          * Outputs navigation selectively based on user authentication
+         * groups.
+         * N.B. Required Ion Auth library.
+         * http://benedmunds.com/ion_auth/
+         *
          * @return HTML markup for navigation
          */
 
         if (!$this->CI->ion_auth->logged_in()){
             return $this->generateNav_fromName('public');
         } else {
-            // Customer Group
-            if ($this->CI->ion_auth->in_group('customer')){
-                return $this->generateNav_fromName('customer');
-            }
-
-            // Business Group
-            if ($this->CI->ion_auth->in_group('business')){
-                return $this->generateNav_fromName('business');
-            }
-
-            // Introducer Group
-            if ($this->CI->ion_auth->in_group('introducer')){
-                return $this->generateNav_fromName('introducer');
+            // User Group
+            if ($this->CI->ion_auth->in_group('user')){
+                return $this->generateNav_fromName('user');
             }
 
             // Admins
